@@ -43,8 +43,9 @@ body {
 }
 
 @theme {
-  --color-main: #1F78DF;
-  --color-secondary: #C5EE5B;
+  --color-main: #25471B;
+  --color-secondary: #EBFE6B;
+  --color-accent:#A9BE32;
   --font-heveltica: "HelvelticaNeue", "Kaleko105", sans-serif;
 }
 @keyframes shake {

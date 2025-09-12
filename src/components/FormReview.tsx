@@ -8,7 +8,7 @@ export default function NuvisionForm() {
     // Only run in the browser
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
-    const SRC = 'https://link.nuvisionwindowsusa.com/js/form_embed.js';
+    const SRC = 'https://link.hatreebrothers.com/js/form_embed.js';
     // Avoid injecting the script multiple times
     let addedByUs = false;
     let script = document.querySelector(`script[src="${SRC}"]`) as HTMLScriptElement | null;
@@ -32,13 +32,13 @@ export default function NuvisionForm() {
     <div
       style={{
         position: 'relative',
-        width: '350px',
+        width: '330px',
         height: '510px', // Altura específica basada en data-height
         padding: 0,
         overflow: 'hidden',
         // Oculta cualquier contenido que se desborde
       }}
-      className="bg-secondary "
+      className="bg-transparent "
     >
       {!loaded && (
         <div
@@ -58,29 +58,31 @@ export default function NuvisionForm() {
         </div>
       )}
       <iframe
-        id="inline-OsQZDeAvTnQMdWxaa15Q"
-        src="https://link.nuvisionwindowsusa.com/widget/form/OsQZDeAvTnQMdWxaa15Q"
+        id="inline-v96kecdrTfvdaar1kabL"
+        src="https://link.hatreebrothers.com/widget/form/v96kecdrTfvdaar1kabL"
         title="Form Reviews"
         loading="lazy"
         onLoad={() => setLoaded(true)}
         style={{
           width: '100%',
-          height: '466px',
+          height: '100%',
           border: 'none',
           borderRadius: 3,
           background: 'transparent',
           padding: 0,
           overflow: 'hidden', // Oculta el scroll interno del iframe
         }}
-        // Note: 'scrolling' is non-standard and can cause React warnings; use CSS overflow to control scroll
         data-layout="{'id':'INLINE'}"
         data-trigger-type="alwaysShow"
+        data-trigger-value=""
         data-activation-type="alwaysActivated"
+        data-activation-value=""
         data-deactivation-type="neverDeactivate"
+        data-deactivation-value=""
         data-form-name="Form Reviews"
-        data-height="466"
-        data-layout-iframe-id="inline-OsQZDeAvTnQMdWxaa15Q"
-        data-form-id="OsQZDeAvTnQMdWxaa15Q"
+        data-height="558"
+        data-layout-iframe-id="inline-v96kecdrTfvdaar1kabL"
+        data-form-id="v96kecdrTfvdaar1kabL"
       />
     </div>
   );

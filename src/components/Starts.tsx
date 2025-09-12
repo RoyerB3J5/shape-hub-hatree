@@ -42,9 +42,9 @@ function Starts() {
               onClick={() => handleRatingSelect(idx)}
             >
               {isActive ? (
-                <FaStar size={24} className="text-yellow-300" />
+                <FaStar size={24} className="text-main" />
               ) : (
-                <FaRegStar size={24} className="text-main" />
+                <FaRegStar size={24} className="text-accent" />
               )}
             </button>
           );
