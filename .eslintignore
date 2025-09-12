@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/
+pnpm-lock.yaml
+*.min.*
+*.d.ts
+coverage/
+.cache/

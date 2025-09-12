@@ -1,0 +1,69 @@
+---
+import { Icon } from 'astro-icon/components';
+import '../../styles/global.css';
+import QRCard from '../../components/QRCard.astro';
+import SocialMedia from '../../components/SocialMedia.astro';
+import Layout from '../../layouts/Layout.astro';
+const content = [
+  {
+    title: 'Instagram',
+    link: 'https://www.instagram.com/nuvisionwindows?igsh=MWV6MzNrdXhkYzE5aQ==',
+  },
+  {
+    title: 'Facebook',
+    link: 'https://www.facebook.com/nuvisionwindowsusa',
+  },
+  {
+    title: 'Website',
+    link: 'https://nuvisionwindowsusa.com/',
+  },
+  {
+    title: 'Our services',
+    link: 'https://nuvisionwindowsusa.com/services',
+  },
+  {
+    title: 'Download our Flyer',
+    link: '/',
+  },
+];
+---
+<Layout>
+	<section class="w-full flex flex-col justify-center items-center gap-8 py-18 px-6">
+	  <div class="w-full flex flex-col justify-center items-center gap-[21px]">
+			<a href="https://nuvisionwindowsusa.com/" aria-label="Ir a la página principal" title="Inicio - NuVision Windows">
+        <img src="/logo.png" alt="Logo de NuVision Windows - Servicio en Avondale, Arizona" width="262" height="72" class="cursor-pointer w-auto h-[65px] ">
+      </a>
+			<div class="flex flex-col justify-center items-center ">
+				<h1 class="text-[16px] font-bold leading-[175%]">@nuvisionwindows</h1>
+				<div class="flex justify-center items-center gap-[3px] mt-[2px] mb-[11px]">
+					<Icon name={'map'} class={"w-[9px] h-[11px] text-main"}/>
+					<p class="text-[10.5px] leading-[22px] font-heveltica font-medium">Chicago, Usa</p>
+				</div>
+				<p class="text-[12px] leading-[18px] text-center font-helveltica font-medium">Renew your home with NuVision quality windows and doors, professional installation.</p>
+			</div>
+			<SocialMedia />
+		</div>
+    <div class="w-full flex flex-col justify-center items-center gap-3">
+      {
+        content.map((item) => (
+          <a class="w-full" href={item.link}>
+            <div class={`w-full bg-main py-[10px] h-[47px] rounded-[10px] text-white flex justify-center items-center ${item.title === "Download our Flyer" ? "animate-shake" : ""}`}>
+              <p class="font-heveltica text-[14px] font-bold leading-[140%]">{item.title}</p>
+            </div>
+          </a>
+          
+        ))
+      }
+    </div>
+    <div class="w-[236px] flex flex-col justify-center items-center gap-12 py-[34px] rounded-[15px] bg-main/10 mt-4">
+      <QRCard url={"https://nuvisionwindows.com/connect/"} label="Scan me for more info" />
+      <QRCard url={"https://nuvisionwindows.com/review/"} label="Give me a review" />
+    </div>   
+		<div class="flex  flex-col justify-center items-center gap-[9px] mt-[40px]">
+          <p class="text-[14px] font-normal leading-[140%] text-[#888] font-heveltica">Powered by</p>
+          <a href="https://inkshapegroup.com/en/">
+            <img src="/footer-logo.webp" alt="Imagen del Footer" width="3745" height="996" class="w-[110px]  h-[29px] cursor-pointer">
+          </a>
+        </div>
+	</section>
+</Layout>
