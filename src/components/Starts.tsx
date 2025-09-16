@@ -8,7 +8,7 @@ function Starts() {
   const [rating, setRating] = useState<number | null>(null);
   const showForm = rating !== null && rating <= 3;
   const total = 5;
-  const reviewLink = 'https://share.google/5HACOpL32dW97KlI9';
+  const reviewLink = 'https://hatreebrothers.com/';
 
   // Move any client-only side effects (redirect) into useEffect so SSR won't break.
   useEffect(() => {
