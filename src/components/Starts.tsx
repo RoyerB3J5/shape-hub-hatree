@@ -8,7 +8,7 @@ function Starts() {
   const [rating, setRating] = useState<number | null>(null);
   const showForm = rating !== null && rating <= 3;
   const total = 5;
-  const reviewLink = 'https://hatreebrothers.com/';
+  const reviewLink = 'https://www.yelp.com/biz/h-and-a-tree-brothers-orlando?utm_campaign=www_business_share_popup&utm_medium=copy_link&utm_source=(direct)';
 
   // Move any client-only side effects (redirect) into useEffect so SSR won't break.
   useEffect(() => {
