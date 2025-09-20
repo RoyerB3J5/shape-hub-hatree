@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { FaRegStar, FaStar } from 'react-icons/fa';
 import FormReview from './FormReview';
 
-
 function Starts() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [rating, setRating] = useState<number | null>(null);
   const showForm = rating !== null && rating <= 3;
   const total = 5;
-  const reviewLink = 'https://www.yelp.com/biz/h-and-a-tree-brothers-orlando?utm_campaign=www_business_share_popup&utm_medium=copy_link&utm_source=(direct)';
+  const reviewLink =
+    'https://www.yelp.com/biz/h-and-a-tree-brothers-orlando?utm_campaign=www_business_share_popup&utm_medium=copy_link&utm_source=(direct)';
 
   // Move any client-only side effects (redirect) into useEffect so SSR won't break.
   useEffect(() => {
@@ -50,7 +50,7 @@ function Starts() {
           );
         })}
       </div>
-      {showForm && <FormReview/>}
+      {showForm && <FormReview />}
     </>
   );
 }

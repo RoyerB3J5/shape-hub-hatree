@@ -1,9 +1,10 @@
 ---
 import { Icon } from 'astro-icon/components';
-import '../../styles/global.css';
-import QRCard from '../../components/QRCard.astro';
-import SocialMedia from '../../components/SocialMedia.astro';
-import Layout from '../../layouts/Layout.astro';
+import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
+import SocialMedia from '../components/SocialMedia.astro';
+import SaveContact from '../components/SaveContact.astro';
+
 const content = [
   {
     title: 'Instagram',
@@ -21,6 +22,7 @@ const content = [
     title: 'Our services',
     link: 'https://hatreebrothers.com/services/',
   },
+  
 ];
 ---
 <Layout>
@@ -30,16 +32,16 @@ const content = [
         <img src="/logo.png" alt="Logo de H&A Tree Brothers - Servicio en Avondale, Arizona" width="262" height="72" class="cursor-pointer w-auto h-[65px] ">
       </a>
 			<div class="flex flex-col justify-center items-center ">
-				<h1 class="text-[16px] font-bold leading-[175%]">@hatreebrothers</h1>
+				<h1 class="text-[24px] font-bold leading-[175%]">@hatreebrothers</h1>
 				<div class="flex justify-center items-center gap-[3px] mt-[2px] mb-[11px]">
 					<Icon name={'map'} class={"w-[9px] h-[11px] text-main"}/>
-					<p class="text-[10.5px] leading-[22px] font-heveltica font-medium">Florida, Usa</p>
+					<p class="text-[12px] leading-[22px] font-heveltica font-medium">Florida, Usa</p>
 				</div>
-				<p class="text-[12px] leading-[18px] text-center font-helveltica font-medium">H&A Tree Brothers: Professional tree services company based in Orlando, Florida.</p>
+				<p class="text-[16px] leading-[18px] text-center font-helveltica font-medium">H&A Tree Brothers: Professional tree services company based in Orlando, Florida.</p>
 			</div>
 			<SocialMedia />
 		</div>
-    <div class="w-full flex flex-col justify-center items-center gap-3">
+    <div class="w-full flex flex-col justify-center items-center gap-3 max-w-[500px]">
       {
         content.map((item) => (
           <a class="w-full" href={item.link}>
@@ -50,6 +52,9 @@ const content = [
           
         ))
       }
+      <button class="w-full bg-main py-[10px] h-[47px] rounded-[10px] text-white flex justify-center items-center font-heveltica text-[14px] font-bold leading-[140%]">
+        Save Contact
+      </button>
     </div>  
 		<div class="flex  flex-col justify-center items-center gap-[9px] mt-[40px]">
           <p class="text-[14px] font-normal leading-[140%] text-[#888] font-heveltica">Powered by</p>
@@ -58,4 +63,30 @@ const content = [
           </a>
         </div>
 	</section>
+  <div class="absolute bg-black/30 w-full h-full top-0 left-0 flex items-end">
+    <div class="w-full h-[70%] rounded-t-[10px] bg-white relative flex flex-col justify-start items-center gap-8 py-6">
+      <p class="text-[16px]">H&A Tree Brothers</p>
+      <div class="flex flex-col justify-center items-start gap-8 mt-3">
+        <p class="text-[18px] font-bold mb-6 w-full text-center">H&A Tree Brothers</p>
+        <div class="flex justify-center items-center gap-5 text-[16px] font-medium">
+          <p>@</p>
+          <a >treebrothers@gmail.com</a>
+        </div>
+        <div class="flex justify-center items-center gap-5 text-[16px] font-medium">
+          <p>@</p>
+          <a >12345678</a>
+        </div>
+        <div class="flex justify-center items-center gap-5 text-[16px] font-medium">
+          <p>@</p>
+          <a >Florida, Usa</a>
+        </div>
+        <div class="flex justify-center items-center gap-5 text-[16px] font-medium">
+          <p>@</p>
+          <a >links/hatreebrothers.com</a>
+        </div>
+        <SaveContact />
+      </div>
+      
+    </div>
+  </div>
 </Layout>

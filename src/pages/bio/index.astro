@@ -30,16 +30,16 @@ const content = [
         <img src="/logo.png" alt="Logo de H&A Tree Brothers - Servicio en Orlando, Florida" width="262" height="72" class="cursor-pointer w-auto h-[65px] ">
       </a>
 			<div class="flex flex-col justify-center items-center ">
-				<h1 class="text-[16px] font-bold leading-[175%]">@hatreebrothers</h1>
+				<h1 class="text-[24px] font-bold leading-[175%]">@hatreebrothers</h1>
 				<div class="flex justify-center items-center gap-[3px] mt-[2px] mb-[11px]">
 					<Icon name={'map'} class={"w-[9px] h-[11px] text-main"}/>
-					<p class="text-[10.5px] leading-[22px] font-heveltica font-medium">Florida, Usa</p>
+					<p class="text-[12px] leading-[22px] font-heveltica font-medium">Florida, Usa</p>
 				</div>
-				<p class="text-[12px] leading-[18px] text-center font-helveltica font-medium">H&A Tree Brothers: Professional tree services company based in Orlando, Florida.</p>
+				<p class="text-[16px] leading-[18px] text-center font-helveltica font-medium">H&A Tree Brothers: Professional tree services company based in Orlando, Florida.</p>
 			</div>
 			<SocialMedia />
 		</div>
-    <div class="w-full flex flex-col justify-center items-center gap-3">
+    <div class="w-full flex flex-col justify-center items-center gap-3 max-w-[500px]">
       {
         content.map((item) => (
           <a class="w-full" href={item.link}>
@@ -52,7 +52,7 @@ const content = [
       }
     </div>
     <div class="w-[236px] flex flex-col justify-center items-center gap-12 py-[34px] rounded-[15px] bg-main/10 mt-4">
-      <QRCard url={"http://links.hatreebrothers.com/connect"} label="Scan me for more info" />
+      <QRCard url={"http://links.hatreebrothers.com/"} label="Scan me for more info" />
       <QRCard url={"http://links.hatreebrothers.com/review"} label="Give me a review" />
     </div>   
 		<div class="flex  flex-col justify-center items-center gap-[9px] mt-[40px]">

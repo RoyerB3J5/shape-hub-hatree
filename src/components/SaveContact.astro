@@ -1,0 +1,97 @@
+---
+// SaveContact.astro (Astro component)
+const contact = {
+  firstName: "Eric",
+  lastName: "Rosario",
+  org: "ELR Restoration Inc",
+  title: "Mold Inspector",
+  phone: "+14074849522",
+  email: "ericelrrestoration@gmail.com",
+  url: "https://linktr.ee/elrrestoration",
+  street: "2202 N Westshore Blvd, Suite 200",
+  city: "Tampa",
+  region: "Florida",
+  postal: "33607",
+  country: "United States",
+  note: "Contacto desde la web"
+};
+---
+<button id="save-contact" class="px-4 py-2 rounded-[10px] border w-full text-[14px] font-bold leading-[18px]">Save to contacts</button>
+
+<script type="module">
+  const contact = JSON.parse(`<!--${JSON.stringify(contact)}-->`.replace(/^<!--|-->$/g, ""));
+
+  function buildVCard(c) {
+    const lines = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `FN:${c.firstName} ${c.lastName}`,
+      `N:${c.lastName};${c.firstName};;;`,
+      c.org ? `ORG:${c.org}` : "",
+      c.title ? `TITLE:${c.title}` : "",
+      c.phone ? `TEL;TYPE=CELL,VOICE:${c.phone}` : "",
+      c.email ? `EMAIL;TYPE=INTERNET:${c.email}` : "",
+      c.url ? `URL:${c.url}` : "",
+      (c.street || c.city) ? `ADR;TYPE=WORK:;;${c.street || ""};${c.city || ""};${c.region || ""};${c.postal || ""};${c.country || ""}` : "",
+      c.note ? `NOTE:${c.note}` : "",
+      "END:VCARD"
+    ];
+    return lines.filter(Boolean).join("\r\n"); // usar CRLF para compatibilidad
+  }
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }
+
+  async function saveContact() {
+    const vcard = buildVCard(contact);
+    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+    const filename = `${contact.firstName}_${contact.lastName}.vcf`;
+
+    // Crear File (necesario para navigator.share en Chrome Android)
+    let file;
+    try {
+      file = new File([blob], filename, { type: "text/vcard" });
+    } catch (e) {
+      // algunos entornos no soportan File constructor; lo ignoramos y usamos blob
+      file = null;
+    }
+
+    // 1) Intentar Web Share (Chrome Android y navegadores que lo soporten)
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: `${contact.firstName} ${contact.lastName}`,
+          text: "Guardar contacto"
+        });
+        return;
+      } catch (err) {
+        // usuario canceló o share falló -> seguir a fallback
+        console.warn("share failed:", err);
+      }
+    }
+
+    // 2) iOS Safari: navegar al blob para que iOS lo abra (a menudo abre la vista previa y permite añadir)
+    if (isIOS()) {
+      const url = URL.createObjectURL(blob);
+      // Abrir en la misma pestaña para que iOS muestre el archivo y ofrezca "Agregar a Contactos"
+      window.location.href = url;
+      // opcional: revocar luego
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      return;
+    }
+
+    // 3) Fallback general: forzar descarga del archivo .vcf (el usuario lo abre y lo importa)
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  document.getElementById("save-contact").addEventListener("click", saveContact);
+</script>
