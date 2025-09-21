@@ -127,9 +127,21 @@ const contact = {
         note: contactToUse.note || ''
       });
       const endpoint = `/api/vcard?${params.toString()}`;
-      // navigate to the endpoint — browsers often open the vCard inline
-      window.location.href = endpoint;
-      return;
+      // Try opening the endpoint in a new tab — sometimes avoids the share sheet and opens vCard inline
+      try {
+        const a = document.createElement('a');
+        a.href = endpoint;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      } catch (err) {
+        // fallback to location change
+        window.location.href = endpoint;
+        return;
+      }
     } catch (err) {
       console.warn('Server endpoint fallback failed, doing download', err);
       const url = URL.createObjectURL(blob);
