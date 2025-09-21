@@ -109,14 +109,38 @@ const contact = {
     }
 
     // 4) Fallback general: forzar descarga del archivo .vcf (el usuario lo abre y lo importa)
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    // Prefer navigating to a server endpoint that returns the vCard with inline headers.
+    try {
+      const params = new URLSearchParams({
+        firstName: contactToUse.firstName || '',
+        lastName: contactToUse.lastName || '',
+        org: contactToUse.org || '',
+        title: contactToUse.title || '',
+        phone: contactToUse.phone || '',
+        email: contactToUse.email || '',
+        url: contactToUse.url || '',
+        street: contactToUse.street || '',
+        city: contactToUse.city || '',
+        region: contactToUse.region || '',
+        postal: contactToUse.postal || '',
+        country: contactToUse.country || '',
+        note: contactToUse.note || ''
+      });
+      const endpoint = `/api/vcard?${params.toString()}`;
+      // navigate to the endpoint — browsers often open the vCard inline
+      window.location.href = endpoint;
+      return;
+    } catch (err) {
+      console.warn('Server endpoint fallback failed, doing download', err);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }
   }
 
   // Use event delegation so the handler works even if button is added later
