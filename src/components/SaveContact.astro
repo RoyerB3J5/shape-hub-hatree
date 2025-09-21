@@ -16,10 +16,10 @@ const contact = {
   note: "Contacto desde la web"
 };
 ---
-<button class="save-contact-btn px-4 py-2 rounded-[10px] border w-full text-[14px] font-bold leading-[18px] cursor-pointer">Save to contacts</button>
+<button class="save-contact-btn px-4 py-2 rounded-[10px] border w-full text-[14px] font-bold leading-[18px] cursor-pointer" data-contact={JSON.stringify(contact)}>Save to contacts</button>
 
 <script type="module">
-  const contact = JSON.parse(`<!--${JSON.stringify(contact)}-->`.replace(/^<!--|-->$/g, ""));
+  // contact JSON is embedded on the button's data-contact attribute
   function buildVCard(c) {
     const lines = [
       "BEGIN:VCARD",
@@ -42,10 +42,12 @@ const contact = {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   }
 
-  async function saveContact() {
-    const vcard = buildVCard(contact);
+  async function saveContact(c) {
+    console.debug('saveContact invoked', c);
+    const contactToUse = c || {};
+    const vcard = buildVCard(contactToUse);
     const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
-    const filename = `${contact.firstName}_${contact.lastName}.vcf`;
+    const filename = `${contactToUse.firstName || 'contact'}_${contactToUse.lastName || ''}.vcf`;
 
     // Crear File (necesario para navigator.share en Chrome Android)
     let file;
@@ -60,10 +62,10 @@ const contact = {
     if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
-          files: [file],
-          title: `${contact.firstName} ${contact.lastName}`,
-          text: "Guardar contacto"
-        });
+            files: [file],
+            title: `${contactToUse.firstName || ''} ${contactToUse.lastName || ''}`,
+            text: "Guardar contacto"
+          });
         return;
       } catch (err) {
         // usuario canceló o share falló -> seguir a fallback
@@ -82,27 +84,43 @@ const contact = {
     }
 
     // 3) Fallback general: forzar descarga del archivo .vcf (el usuario lo abre y lo importa)
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   }
 
-  // Attach listener to all buttons in case component is rendered multiple times
+  // Use event delegation so the handler works even if button is added later
   try {
-    const buttons = document.querySelectorAll('.save-contact-btn');
-    buttons.forEach((btn) => btn.addEventListener('click', (e) => {
-      try {
-        saveContact();
-      } catch (err) {
-        console.error('saveContact failed:', err);
-      }
-    }));
+    if (!window.__saveContactDelegationInstalled) {
+      window.__saveContactDelegationInstalled = true;
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!(target instanceof Element)) return;
+        // check if clicked element or its ancestor has the class
+        const btn = target.closest('.save-contact-btn');
+        if (btn) {
+          console.debug('Save contact button clicked');
+          try {
+            // read contact from button dataset
+            let c = null;
+            try {
+              c = btn.dataset.contact ? JSON.parse(btn.dataset.contact) : null;
+            } catch (err) {
+              console.error('Failed to parse contact dataset', err);
+            }
+            saveContact(c);
+          } catch (err) {
+            console.error('saveContact failed:', err);
+          }
+        }
+      });
+    }
   } catch (err) {
-    console.error('Failed to attach save contact listeners:', err);
+    console.error('Failed to install delegated save contact listener:', err);
   }
 </script>
