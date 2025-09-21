@@ -42,11 +42,15 @@ const contact = {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   }
 
+  function isAndroid() {
+    return /Android/.test(navigator.userAgent);
+  }
+
   async function saveContact(c) {
     console.debug('saveContact invoked', c);
     const contactToUse = c || {};
     const vcard = buildVCard(contactToUse);
-    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+  const blob = new Blob([vcard], { type: "text/vcard" });
     const filename = `${contactToUse.firstName || 'contact'}_${contactToUse.lastName || ''}.vcf`;
 
     // Crear File (necesario para navigator.share en Chrome Android)
@@ -73,21 +77,42 @@ const contact = {
       }
     }
 
-    // 2) iOS Safari: navegar al blob para que iOS lo abra (a menudo abre la vista previa y permite añadir)
+    // 2) iOS Safari: navegar a un data: URL para forzar la vista previa de vCard
     if (isIOS()) {
-      const url = URL.createObjectURL(blob);
-      // Abrir en la misma pestaña para que iOS muestre el archivo y ofrezca "Agregar a Contactos"
-      window.location.href = url;
-      // opcional: revocar luego
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-      return;
+      try {
+        const dataUrl = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcard);
+        // Abrir en la misma pestaña para que iOS muestre la vista previa y permita "Agregar a Contactos"
+        window.location.href = dataUrl;
+        return;
+      } catch (err) {
+        console.warn('data url fallback failed, trying blob:', err);
+        const url = URL.createObjectURL(blob);
+        window.location.href = url;
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        return;
+      }
     }
 
-    // 3) Fallback general: forzar descarga del archivo .vcf (el usuario lo abre y lo importa)
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
+    // 3) Android: intentar intento para abrir la vista de insertar contacto (Chrome Android soporta intent URI)
+    if (isAndroid()) {
+      try {
+        // Construir intent con algunos campos básicos. Esto es "best-effort" y depende del navegador/version.
+        const name = encodeURIComponent((contactToUse.firstName || '') + ' ' + (contactToUse.lastName || ''));
+        const phone = encodeURIComponent(contactToUse.phone || '');
+        const email = encodeURIComponent(contactToUse.email || '');
+        const intentUri = `intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/contact;S.name=${name};S.phone=${phone};S.email=${email};end`;
+        window.location.href = intentUri;
+        return;
+      } catch (err) {
+        console.warn('Android intent fallback failed, continuing to download', err);
+      }
+    }
+
+    // 4) Fallback general: forzar descarga del archivo .vcf (el usuario lo abre y lo importa)
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
