@@ -26,6 +26,7 @@ const content = [
 ];
 ---
 <Layout>
+  <img src="/share-dark.svg" alt="Compartir" class="absolute top-6 right-6 w-6 h-6 cursor-pointer share-btn">
 	<section class="w-full flex flex-col justify-center items-center gap-8 px-6 py-18">
 	  <div class="w-full flex flex-col justify-center items-center gap-[21px]">
 			<a href="https://hatreebrothers.com/" aria-label="Ir a la página principal" title="Inicio - H&A Tree Brothers">
@@ -65,11 +66,11 @@ const content = [
 	</section>
   <div class="absolute bg-black/30 w-screen h-screen top-0 left-0 flex items-end" style="z-index:9999; pointer-events: none;" id="contact-panel">
     <div id="contact-panel-inner" class="w-full h-[80%] rounded-t-[20px] bg-white relative flex flex-col justify-start items-center gap-8 py-6 transform translate-y-full transition-transform duration-300 ease-in-out" style="z-index:10000; pointer-events: auto;">
-  <img src="/share.svg" alt="Compartir" class="absolute top-5 left-5 w-6 h-6 cursor-pointer" id="share-panel-btn">
-      <img src="/equis.svg" alt="Cerrar panel" class="absolute top-5 right-5 w-6 h-6 cursor-pointer" id="close-panel">
+  <img src="/share.svg" alt="Compartir" class="absolute top-5 left-5 w-6 h-6 cursor-pointer share-btn">
+      <img src="/equis.svg" alt="Cerrar panel" class="absolute top-5 right-5 w-5 h-5 cursor-pointer" id="close-panel">
       <p class="text-[16px]">H&A Tree Brothers</p>
       <div class="flex flex-col justify-center items-start gap-8 mt-3">
-        <p class="text-[18px] font-bold mb-6 w-full text-center">H&A Tree Brothers</p>
+        <p class="text-[18px] font-bold mb-5 w-full text-center">H&A Tree Brothers</p>
         <div class="flex justify-center items-center gap-5 text-[16px] font-medium">
           <p class="font-bold text-[22px]">@</p>
           <a >treebrothers@gmail.com</a>
@@ -165,37 +166,38 @@ const content = [
 
     openContactPanelButton.addEventListener('click', showPanel);
 
-    // Share button: open native share sheet when supported
-    const shareButton = document.getElementById('share-panel-btn');
-    if (shareButton) {
-      shareButton.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const shareData = {
-          title: 'H&A Tree Brothers',
-          text: 'Contact H&A Tree Brothers — professional tree services',
-          url: window.location.href,
-        };
+    // Share buttons: open native share sheet when supported
+    const shareButtons = document.querySelectorAll('.share-btn');
+    if (shareButtons && shareButtons.length) {
+      shareButtons.forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const shareData = {
+            title: 'H&A Tree Brothers',
+            text: 'H&A Tree Brothers — professional tree services',
+            url: window.location.href,
+          };
 
-        if (navigator.share) {
-          try {
-            await navigator.share(shareData);
-            return;
-          } catch (err) {
-            // user cancelled or error; fall through to clipboard fallback
-            console.warn('share failed or cancelled', err);
+          if (navigator.share) {
+            try {
+              await navigator.share(shareData);
+              return;
+            } catch (err) {
+              // user cancelled or error; fall through to clipboard fallback
+              console.warn('share failed or cancelled', err);
+            }
           }
-        }
 
-        // Fallback: copy URL to clipboard and notify user
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          // small user feedback; prefer a non-blocking toast in the future
-          alert('Enlace copiado al portapapeles. Pega y comparte donde quieras.');
-        } catch (err) {
-          // last resort: open native share via mailto as a helper
-          console.warn('clipboard write failed', err);
-          window.location.href = `mailto:?subject=${encodeURIComponent(shareData.title)}&body=${encodeURIComponent(shareData.text + '\n' + shareData.url)}`;
-        }
+          // Fallback: copy URL to clipboard and notify user
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            // small user feedback; prefer a non-blocking toast in the future
+            alert('Enlace copiado al portapapeles. Pega y comparte donde quieras.');
+          } catch (err) {
+            // last resort: open native share via mailto as a helper
+            console.warn('clipboard write failed', err);
+          }
+        });
       });
     }
 

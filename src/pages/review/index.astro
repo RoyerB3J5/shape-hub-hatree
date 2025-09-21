@@ -7,6 +7,7 @@ import Starts from '../../components/Starts';
 
 ---
 <Layout>
+  <img src="/share-light.svg" alt="Compartir" class="absolute top-6 right-6 w-6 h-6 cursor-pointer share-btn">
 	<section class="w-full flex flex-col justify-center items-center gap-4 h-full ">
     <div class="w-full flex flex-col justify-center items-center gap-4 min-h-[70vh] bg-main px-6 py-5">
       <div class="w-full flex flex-col justify-center items-center gap-[20px]">
@@ -43,3 +44,39 @@ import Starts from '../../components/Starts';
       </section>
 	</section>
 </Layout>
+<script is:inline>
+  // Share buttons: open native share sheet when supported
+    const shareButtons = document.querySelectorAll('.share-btn');
+    if (shareButtons && shareButtons.length) {
+      shareButtons.forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const shareData = {
+            title: 'H&A Tree Brothers',
+            text: 'H&A Tree Brothers — professional tree services',
+            url: window.location.href,
+          };
+
+          if (navigator.share) {
+            try {
+              await navigator.share(shareData);
+              return;
+            } catch (err) {
+              // user cancelled or error; fall through to clipboard fallback
+              console.warn('share failed or cancelled', err);
+            }
+          }
+
+          // Fallback: copy URL to clipboard and notify user
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            // small user feedback; prefer a non-blocking toast in the future
+            alert('Enlace copiado al portapapeles. Pega y comparte donde quieras.');
+          } catch (err) {
+            // last resort: open native share via mailto as a helper
+            console.warn('clipboard write failed', err);
+          }
+        });
+      });
+    }
+</script>
