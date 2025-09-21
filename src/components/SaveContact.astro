@@ -16,7 +16,15 @@ const contact = {
   note: "Contacto desde la web"
 };
 ---
-<button class="save-contact-btn px-4 py-2 rounded-[10px] border w-full text-[14px] font-bold leading-[18px] cursor-pointer" data-contact={JSON.stringify(contact)}>Save to contacts</button>
+<div class="w-full">
+  <button class="save-contact-btn px-4 py-2 rounded-[10px] border w-full text-[14px] font-bold leading-[18px] cursor-pointer mb-2" data-contact={JSON.stringify(contact)}>Save to contacts</button>
+  <div class="flex gap-2 mt-2 text-[12px]">
+    <button id="test-dataurl" class="px-3 py-1 rounded border">DataURL (same tab)</button>
+    <button id="test-endpoint-new" class="px-3 py-1 rounded border">Endpoint (new tab)</button>
+    <button id="test-endpoint-same" class="px-3 py-1 rounded border">Endpoint (same tab)</button>
+    <button id="test-download" class="px-3 py-1 rounded border">Download .vcf</button>
+  </div>
+</div>
 
 <script type="module">
   // contact JSON is embedded on the button's data-contact attribute
@@ -179,6 +187,45 @@ const contact = {
             console.error('saveContact failed:', err);
           }
         }
+      });
+
+      // Test buttons handlers
+      document.getElementById('test-dataurl')?.addEventListener('click', () => {
+        const btn = document.querySelector('.save-contact-btn');
+        const c = btn?.dataset.contact ? JSON.parse(btn.dataset.contact) : null;
+        if (!c) return alert('No contact data');
+        const vcard = buildVCard(c);
+        const dataUrl = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcard);
+        // open same tab
+        window.location.href = dataUrl;
+      });
+
+      document.getElementById('test-endpoint-new')?.addEventListener('click', () => {
+        const btn = document.querySelector('.save-contact-btn');
+        const c = btn?.dataset.contact ? JSON.parse(btn.dataset.contact) : null;
+        if (!c) return alert('No contact data');
+        const params = new URLSearchParams({ firstName: c.firstName||'', lastName: c.lastName||'', phone: c.phone||'', email: c.email||'' });
+        const endpoint = `/api/vcard?${params.toString()}`;
+        const a = document.createElement('a'); a.href = endpoint; a.target = '_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove();
+      });
+
+      document.getElementById('test-endpoint-same')?.addEventListener('click', () => {
+        const btn = document.querySelector('.save-contact-btn');
+        const c = btn?.dataset.contact ? JSON.parse(btn.dataset.contact) : null;
+        if (!c) return alert('No contact data');
+        const params = new URLSearchParams({ firstName: c.firstName||'', lastName: c.lastName||'', phone: c.phone||'', email: c.email||'' });
+        const endpoint = `/api/vcard?${params.toString()}`;
+        window.location.href = endpoint;
+      });
+
+      document.getElementById('test-download')?.addEventListener('click', () => {
+        const btn = document.querySelector('.save-contact-btn');
+        const c = btn?.dataset.contact ? JSON.parse(btn.dataset.contact) : null;
+        if (!c) return alert('No contact data');
+        const vcard = buildVCard(c);
+        const blob = new Blob([vcard], { type: 'text/vcard' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `${c.firstName||'contact'}_${c.lastName||''}.vcf`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 5000);
       });
     }
   } catch (err) {
